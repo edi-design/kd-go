@@ -30,7 +30,8 @@ Place a `config.json` next to the binary and fill it with the following content,
 ## run
 
 The easiest way, is to run the binary without any params. It searches automatically for the `config.json` next to the binary.
-`./kd_go`
+
+`./kd_proxy`
 
 ### params
 
