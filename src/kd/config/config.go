@@ -2,7 +2,7 @@
 // Date: 23.04.2015
 // Version: 1
 
-// Backend api configuration structs and table-names.
+// configuration structs and global const.
 package config
 
 // Api configuration struct
@@ -14,6 +14,7 @@ type Config struct {
 			}
 }
 
+// struct to login to api
 type SignIn struct {
 	DomainID    int
 	SiteGuid    string
@@ -21,6 +22,7 @@ type SignIn struct {
 	UserData    interface{}
 }
 
+// channellist
 type ChannelList []struct {
 	MediaID               interface{}
 	MediaName             string
@@ -67,12 +69,13 @@ type ChannelList []struct {
 	ExternalIDs           interface{}
 }
 
+// response of a licensed link
 type LicensedLink struct {
 	MainUrl string
 	AltUrl  string
 }
 
-// Backend tablenames as const
+// global const to be used in code
 const (
 	GATEWAY = "https://api-live.iptv.kabel-deutschland.de/v2_9/gateways/jsonpostgw.aspx"
 	IOS_VERSION = "8.1.2"
