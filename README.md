@@ -1,5 +1,6 @@
 # kd-go
-GO-Version of the KabelDeutschland streaming proxy (https://github.com/edi-design/kd-streaming-proxy)
+GO-Version of the KabelDeutschland streaming proxy (https://github.com/edi-design/kd-streaming-proxy).
+To get more information, visit http://freshest.me.
 
 ## dependencies
 
