@@ -1,0 +1,7 @@
+{
+  "Service": {
+    "Username": "##USERNAME##",
+    "Password": "##PASSWORD##",
+    "Listen": ":8787"
+  }
+}
