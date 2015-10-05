@@ -35,7 +35,7 @@ var (
 )
 
 // main
-func Service(ObjConfig *config.Config, verbose *bool) {
+func Service(ObjConfig *config.Config) {
 	// write config to environment vars
 	Config = ObjConfig
 
@@ -62,19 +62,19 @@ func Service(ObjConfig *config.Config, verbose *bool) {
 }
 
 // Default route-handler if no configured endpoint matches.
-func notFoundHandler(writer http.ResponseWriter, request *http.Request) {
-	params := mux.Vars(request)
+func notFoundHandler(w http.ResponseWriter, r *http.Request) {
+	params := mux.Vars(r)
 	path := params["path"]
 
 	err := errors.New("use known subroutes")
 	fmt.Println(err)
 	fmt.Printf("path requested: %s:", path)
 
-	writer.WriteHeader(http.StatusNotFound)
+	w.WriteHeader(http.StatusNotFound)
 }
 
 // Handles the root directory requests.
-func channelHandler(writer http.ResponseWriter, request *http.Request) {
+func channelHandler(w http.ResponseWriter, r *http.Request) {
 	// init vars
 	var result config.ChannelList
 	var data string
@@ -83,7 +83,7 @@ func channelHandler(writer http.ResponseWriter, request *http.Request) {
 	fmt.Println("== Get channellist")
 
 	// get params
-	params := mux.Vars(request)
+	params := mux.Vars(r)
 	format := params["format"]
 	quality := params["quality"]
 
@@ -123,23 +123,25 @@ func channelHandler(writer http.ResponseWriter, request *http.Request) {
 
 	// set header
 	if format == "txt" {
-		writer.Header().Set("Content-Type", "text/plain")
+		w.Header().Set("Content-Type", "text/plain")
 	} else {
-		writer.Header().Set("Content-Type", "application/vnd.apple.mpegurl")
+		w.Header().Set("Content-Type", "application/vnd.apple.mpegurl")
 	}
 
-	writer.Header().Set("Status", "200 OK")
-	writer.Header().Set("Content-Disposition", "inline; filename=\"playlist.m3u\"")
-	writer.Header().Set("Cache-Control", "no-cache, must-revalidate")
-	writer.Header().Set("Expies", "Sat, 26 Jul 1997 05:00:00 GMT")
+	w.Header().Set("Status", "200 OK")
+	w.Header().Set("Content-Disposition", "inline; filename=\"playlist.m3u\"")
+	w.Header().Set("Cache-Control", "no-cache, must-revalidate")
+	w.Header().Set("Expies", "Sat, 26 Jul 1997 05:00:00 GMT")
 
-	writer.Write([]byte(data))
+	w.Write([]byte(data))
 }
 
 // get playlist according to requested quality
 func getQualityInformations(quality string) (string, string) {
-	var quality_file string
-	var quality_playlist string
+	var (
+		quality_file     string
+		quality_playlist string
+	)
 
 	switch quality {
 	case "low":

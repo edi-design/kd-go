@@ -60,5 +60,5 @@ func main() {
 	}
 
 	// run service
-	kd.Service(Config, verbose)
+	kd.Service(Config)
 }
