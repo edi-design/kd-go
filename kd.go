@@ -20,7 +20,7 @@ var (
 	help            = flag.Bool("h", false, "display help message")
 	version         = flag.Bool("version", false, "shows the current version number.")
 	configFileParam = flag.String("c", "", "specifiy the config.json location, if not next to binary")
-	Config          *config.Config
+	Config          = &config.Config{}
 )
 
 const (
@@ -52,9 +52,9 @@ func main() {
 		dir, _ := filepath.Abs(filepath.Dir(os.Args[0]))
 		cfgFile = dir + "/config.json"
 	}
-	err := cfg.Load(cfgFile, &Config)
+	err := cfg.Load(cfgFile, Config)
 	if err != nil {
-		cfg.Save(cfgFile, &Config)
+		cfg.Save(cfgFile, Config)
 		fmt.Println("\n\tPlease edit your configuration at: ", cfgFile, "\n")
 		os.Exit(0)
 	}
