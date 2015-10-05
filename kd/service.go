@@ -198,6 +198,7 @@ func signIn() {
 
 	request_url := getUrl(config.METHOD_SIGNIN)
 
+	// TODO use json.Marshal
 	body :=
 		"{\"initObj\":" +
 			getInitObj() +
