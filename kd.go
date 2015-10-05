@@ -17,7 +17,6 @@ import (
 )
 
 var (
-	help            = flag.Bool("h", false, "display help message")
 	version         = flag.Bool("version", false, "shows the current version number.")
 	configFileParam = flag.String("c", "", "specifiy the config.json location, if not next to binary")
 	Config          = &config.Config{}
@@ -30,18 +29,10 @@ const (
 func main() {
 	flag.Parse()
 
-	// if environment is not set, print help
-	if *help {
-		fmt.Println("you need to set the following params:")
-		flag.PrintDefaults()
-		os.Exit(1)
-	}
-
-	// if environment is not set, print help
 	if *version {
 		fmt.Println("KabelDeutschland streaming proxy, http://freshest.me")
 		fmt.Println(Version)
-		os.Exit(1)
+		return
 	}
 
 	// load config
@@ -56,7 +47,7 @@ func main() {
 	if err != nil {
 		cfg.Save(cfgFile, Config)
 		fmt.Println("\n\tPlease edit your configuration at: ", cfgFile, "\n")
-		os.Exit(0)
+		return
 	}
 
 	// run service
