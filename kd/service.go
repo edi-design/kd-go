@@ -207,12 +207,12 @@ func signIn() {
 			",\"providerID\":0" +
 			"}"
 
-	handleError(fmt.Sprint(body))
+	handleError(body)
 	err := httpRequest("POST", request_url, body, &result)
 
 	switch {
 	case err != nil, result.LoginStatus != 0:
-		handleError(fmt.Sprint("Returned result: %v", result))
+		handleError(fmt.Sprintf("Returned result: %v", result))
 		fmt.Println("Credentials are wrong")
 		os.Exit(1)
 	}
@@ -298,7 +298,7 @@ func httpRequest(method string, url string, body string, result interface{}) err
 // handle verbose mode otuput
 func handleError(message string) {
 	if *verbose {
-		fmt.Println(message)
+		log.Print(message)
 	}
 }
 
