@@ -26,6 +26,10 @@ var (
 	Config           *config.Config
 )
 
+const (
+	Version = "0.1.3"
+)
+
 func main() {
 	flag.Parse()
 
@@ -39,7 +43,7 @@ func main() {
 	// if environment is not set, print help
 	if *version {
 		fmt.Println("KabelDeutschland streaming proxy, http://freshest.me")
-		fmt.Println("0.1.3")
+		fmt.Println(Version)
 		os.Exit(1)
 	}
 
