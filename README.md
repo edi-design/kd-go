@@ -6,6 +6,7 @@ To get more information, visit http://freshest.me.
 
 * gorilla mux router (https://github.com/gorilla/mux)
  * `go get github.com/gorilla/mux`
+ * `go get bitbucket.org/gotamer/cfg`
 
 ## build
 
