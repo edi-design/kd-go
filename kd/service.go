@@ -5,6 +5,7 @@ import (
 	b64 "encoding/base64"
 	"encoding/json"
 	"errors"
+	"flag"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -27,19 +28,17 @@ type MainConfig struct {
 }
 
 var (
-	Config      *config.Config
-	Verbose     *bool
-	NoCheckCert *bool
-	NoCache     *bool
+	Config           *config.Config
+	Verbose          *bool
+	noCheckCertParam = flag.Bool("no-check-certificate", false, "disable root CA check for HTTP requests")
+	noCache          = flag.Bool("no-cache", false, "disables playlist caching")
 )
 
 // main
-func Service(ObjConfig *config.Config, verbose *bool, no_check_cert *bool, no_cache *bool) {
+func Service(ObjConfig *config.Config, verbose *bool) {
 	// write config to environment vars
 	Config = ObjConfig
 	Verbose = verbose
-	NoCheckCert = no_check_cert
-	NoCache = no_cache
 
 	// check credentials
 	signIn()
@@ -118,7 +117,7 @@ func channelHandler(writer http.ResponseWriter, request *http.Request) {
 		}
 
 		// write cache file
-		if *NoCache == false {
+		if !*noCache {
 			ioutil.WriteFile(cache_file, []byte(data), 0644)
 		}
 	}
@@ -258,7 +257,7 @@ func httpRequest(method string, url string, body string, result interface{}) err
 
 	// init client, skip cert check, because of some problems with env without root-ca
 	tr := &http.Transport{}
-	if *NoCheckCert == true {
+	if *noCheckCertParam {
 		tr.TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
 		handleError("= certificate check disabled")
 	}
