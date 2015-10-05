@@ -17,13 +17,13 @@ import (
 )
 
 var (
-	help                = flag.Bool("h", false, "display help message")
-	verbose             = flag.Bool("v", false, "enable verbose mode to see more debug output.")
-	version             = flag.Bool("version", false, "shows the current version number.")
-	config_file_param   = flag.String("c", "", "specifiy the config.json location, if not next to binary")
-	no_check_cert_param = flag.Bool("no-check-certificate", false, "disable root CA check for HTTP requests")
-	no_cache            = flag.Bool("no-cache", false, "disables playlist caching")
-	Config              *config.Config
+	help             = flag.Bool("h", false, "display help message")
+	verbose          = flag.Bool("v", false, "enable verbose mode to see more debug output.")
+	version          = flag.Bool("version", false, "shows the current version number.")
+	configFileParam  = flag.String("c", "", "specifiy the config.json location, if not next to binary")
+	noCheckCertParam = flag.Bool("no-check-certificate", false, "disable root CA check for HTTP requests")
+	noCache          = flag.Bool("no-cache", false, "disables playlist caching")
+	Config           *config.Config
 )
 
 func main() {
@@ -44,20 +44,20 @@ func main() {
 	}
 
 	// load config
-	var cfg_file string
-	if *config_file_param != "" {
-		cfg_file = *config_file_param
+	var cfgFile string
+	if *configFileParam != "" {
+		cfgFile = *configFileParam
 	} else {
 		dir, _ := filepath.Abs(filepath.Dir(os.Args[0]))
-		cfg_file = dir + "/config.json"
+		cfgFile = dir + "/config.json"
 	}
-	err := cfg.Load(cfg_file, &Config)
+	err := cfg.Load(cfgFile, &Config)
 	if err != nil {
-		cfg.Save(cfg_file, &Config)
-		fmt.Println("\n\tPlease edit your configuration at: ", cfg_file, "\n")
+		cfg.Save(cfgFile, &Config)
+		fmt.Println("\n\tPlease edit your configuration at: ", cfgFile, "\n")
 		os.Exit(0)
 	}
 
 	// run service
-	kd.Service(Config, verbose, no_check_cert_param, no_cache)
+	kd.Service(Config, verbose, noCheckCertParam, noCache)
 }

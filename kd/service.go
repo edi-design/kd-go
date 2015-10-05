@@ -48,23 +48,23 @@ func Service(ObjConfig *config.Config, verbose *bool, no_check_cert *bool, no_ca
 	serv := mux.NewRouter()
 
 	subroute := serv.PathPrefix("/").Subrouter()
-	subroute.HandleFunc("/", ChannelHandler).Methods("GET")
-	subroute.HandleFunc("/{quality}", ChannelHandler).Methods("GET")
-	subroute.HandleFunc("/{quality}/{format}", ChannelHandler).Methods("GET")
+	subroute.HandleFunc("/", channelHandler).Methods("GET")
+	subroute.HandleFunc("/{quality}", channelHandler).Methods("GET")
+	subroute.HandleFunc("/{quality}/{format}", channelHandler).Methods("GET")
 
 	// not found handler. fallback if given path is not set up.
-	subroute.HandleFunc("/{path:.*}", NotFoundHandler)
+	subroute.HandleFunc("/{path:.*}", notFoundHandler)
 
 	// start http-handle
 	http.Handle("/", serv)
 
 	fmt.Println("== Listening ...")
-	PrintInterfaces()
+	printInterfaces()
 	http.ListenAndServe(Config.Service.Listen, nil)
 }
 
 // Default route-handler if no configured endpoint matches.
-func NotFoundHandler(writer http.ResponseWriter, request *http.Request) {
+func notFoundHandler(writer http.ResponseWriter, request *http.Request) {
 	params := mux.Vars(request)
 	path := params["path"]
 
@@ -76,7 +76,7 @@ func NotFoundHandler(writer http.ResponseWriter, request *http.Request) {
 }
 
 // Handles the root directory requests.
-func ChannelHandler(writer http.ResponseWriter, request *http.Request) {
+func channelHandler(writer http.ResponseWriter, request *http.Request) {
 	// init vars
 	var result config.ChannelList
 	var data string
@@ -187,7 +187,7 @@ func getLicensedLink(id string, link string, playlist string) (string, error) {
 
 // concats params to return a valid API url
 func getUrl(method string) string {
-	return config.GATEWAY + "?m=" + method + "&iOSv=" + config.IOS_VERSION + "&Appv=" + config.APP_VERSION
+	return fmt.Sprintf("%s?m=%s&iOSv=%s&Appv=%s", config.GATEWAY, method, config.IOS_VERSION, config.APP_VERSION)
 }
 
 // check credentials
@@ -220,7 +220,7 @@ func signIn() {
 }
 
 // print interfaces to know where the proxy is listening
-func PrintInterfaces() {
+func printInterfaces() {
 	addrs, err := net.InterfaceAddrs()
 
 	if err != nil {
