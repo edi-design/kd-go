@@ -29,7 +29,7 @@ type MainConfig struct {
 
 var (
 	Config           *config.Config
-	Verbose          *bool
+	verbose          = flag.Bool("v", false, "enable verbose mode to see more debug output.")
 	noCheckCertParam = flag.Bool("no-check-certificate", false, "disable root CA check for HTTP requests")
 	noCache          = flag.Bool("no-cache", false, "disables playlist caching")
 )
@@ -38,7 +38,6 @@ var (
 func Service(ObjConfig *config.Config, verbose *bool) {
 	// write config to environment vars
 	Config = ObjConfig
-	Verbose = verbose
 
 	// check credentials
 	signIn()
@@ -278,30 +277,30 @@ func httpRequest(method string, url string, body string, result interface{}) err
 		return err
 	}
 
-	resp, err_request := client.Do(req)
-	if err_request != nil {
-		handleError(fmt.Sprintf("could not fetch: %v", err_request))
-		return err_request
+	resp, err := client.Do(req)
+	if err != nil {
+		handleError(fmt.Sprintf("could not fetch: %v", err))
+		return err
 	}
 
 	decoder := json.NewDecoder(resp.Body)
-	err_decode := decoder.Decode(&result)
-	if err_decode != nil {
-		handleError(fmt.Sprintf("could not decode response: %v", err_decode))
+	err = decoder.Decode(&result)
+	if err != nil {
+		handleError(fmt.Sprintf("could not decode response: %v", err))
 	}
 
-	return err_decode
+	return err
 }
 
 // handle verbose mode otuput
 func handleError(message string) {
-	if *Verbose {
+	if *verbose {
 		fmt.Println(message)
 	}
 }
 
 // init obj
 func getInitObj() string {
-	init_object, _ := b64.StdEncoding.DecodeString(config.INIT_OBJECT)
-	return string(init_object)
+	initObject, _ := b64.StdEncoding.DecodeString(config.INIT_OBJECT)
+	return string(initObject)
 }

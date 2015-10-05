@@ -18,7 +18,6 @@ import (
 
 var (
 	help            = flag.Bool("h", false, "display help message")
-	verbose         = flag.Bool("v", false, "enable verbose mode to see more debug output.")
 	version         = flag.Bool("version", false, "shows the current version number.")
 	configFileParam = flag.String("c", "", "specifiy the config.json location, if not next to binary")
 	Config          *config.Config
