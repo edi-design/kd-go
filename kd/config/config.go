@@ -22,8 +22,11 @@ type SignIn struct {
 	UserData    interface{}
 }
 
+type ChannelList []Channel
+
 // channellist
-type ChannelList []struct {
+// ToDo http://freshest.me/how-to-reverse-engineer-the-kabeldeutschland-tv-streaming-api/
+type Channel struct {
 	MediaID               interface{}
 	MediaName             string
 	MediaTypeID           interface{}
