@@ -7,7 +7,6 @@ import (
 	"errors"
 	"fmt"
 	"io/ioutil"
-	"kd/config"
 	"log"
 	"net"
 	"net/http"
@@ -15,6 +14,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/edi-design/kd-go/kd/config"
 	"github.com/gorilla/mux"
 )
 

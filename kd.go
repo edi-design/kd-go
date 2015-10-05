@@ -7,10 +7,11 @@ package main
 import (
 	"flag"
 	"fmt"
-	"kd"
-	"kd/config"
 	"os"
 	"path/filepath"
+
+	"github.com/edi-design/kd-go/kd"
+	"github.com/edi-design/kd-go/kd/config"
 
 	"bitbucket.org/gotamer/cfg"
 )
