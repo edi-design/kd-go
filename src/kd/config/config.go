@@ -8,10 +8,10 @@ package config
 // Api configuration struct
 type Config struct {
 	Service struct {
-				Username string
-				Password string
-				Listen   string
-			}
+		Username string
+		Password string
+		Listen   string
+	}
 }
 
 // struct to login to api
@@ -50,7 +50,7 @@ type ChannelList []struct {
 	like_counter          interface{}
 	Tags                  interface{}
 	AdvertisingParameters interface{}
-	Files                 [] struct {
+	Files                 []struct {
 		FileID          string
 		URL             string
 		Duration        string
@@ -65,8 +65,8 @@ type ChannelList []struct {
 		IsDefaultLang   bool
 		CoGuid          string
 	}
-	Pictures              interface{}
-	ExternalIDs           interface{}
+	Pictures    interface{}
+	ExternalIDs interface{}
 }
 
 // response of a licensed link
@@ -77,22 +77,21 @@ type LicensedLink struct {
 
 // global const to be used in code
 const (
-	GATEWAY = "https://api-live.iptv.kabel-deutschland.de/v2_9/gateways/jsonpostgw.aspx"
-	IOS_VERSION = "8.1.2"
-	APP_VERSION = "1.1.5"
-	METHOD_SIGNIN = "SSOSignIn"
-	METHOD_CHANNELLIST = "GetChannelMediaList"
+	GATEWAY              = "https://api-live.iptv.kabel-deutschland.de/v2_9/gateways/jsonpostgw.aspx"
+	IOS_VERSION          = "8.1.2"
+	APP_VERSION          = "1.1.5"
+	METHOD_SIGNIN        = "SSOSignIn"
+	METHOD_CHANNELLIST   = "GetChannelMediaList"
 	METHOD_LICENSED_LINK = "GetLicensedLinks"
-	INIT_OBJECT = "eyJBcGlVc2VyIjoidHZwYXBpXzE4MSIsIlVESUQiOiJEMkFDNjMzQUZCNjQ0Q0YwQTY3NTA1MzcwNTc4Q0RFNSIsIkRvbWFpbklEIjozMTUzODQsIlNpdGVHdWlkIjo2Nzk4NzAsIlBsYXRmb3JtIjoiaVBhZCIsIkFwaVBhc3MiOiJhek5ETHpzblRCVHRBclZXMlNIUiIsIkxvY2FsZSI6eyJMb2NhbGVEZXZpY2UiOiJudWxsIiwiTG9jYWxlVXNlclN0YXRlIjoiVW5rbm93biIsIkxvY2FsZUNvdW50cnkiOiJudWxsIiwiTG9jYWxlTGFuZ3VhZ2UiOiJudWxsIn19"
-	CHANNEL_OBJECT = "\"orderBy\":\"None\",\"pageSize\":1000,\"picSize\":\"100X100\",\"ChannelID\":340758"
-	M3U_HEAD = "#EXTM3U\n"
-	M3U_LINE = "#EXTINF:-1,%s\n%s\n"
+	INIT_OBJECT          = "eyJBcGlVc2VyIjoidHZwYXBpXzE4MSIsIlVESUQiOiJEMkFDNjMzQUZCNjQ0Q0YwQTY3NTA1MzcwNTc4Q0RFNSIsIkRvbWFpbklEIjozMTUzODQsIlNpdGVHdWlkIjo2Nzk4NzAsIlBsYXRmb3JtIjoiaVBhZCIsIkFwaVBhc3MiOiJhek5ETHpzblRCVHRBclZXMlNIUiIsIkxvY2FsZSI6eyJMb2NhbGVEZXZpY2UiOiJudWxsIiwiTG9jYWxlVXNlclN0YXRlIjoiVW5rbm93biIsIkxvY2FsZUNvdW50cnkiOiJudWxsIiwiTG9jYWxlTGFuZ3VhZ2UiOiJudWxsIn19"
+	CHANNEL_OBJECT       = "\"orderBy\":\"None\",\"pageSize\":1000,\"picSize\":\"100X100\",\"ChannelID\":340758"
+	M3U_HEAD             = "#EXTM3U\n"
+	M3U_LINE             = "#EXTINF:-1,%s\n%s\n"
 
-	QUALITY_LOW = "CCURstream564000.m3u8"
+	QUALITY_LOW    = "CCURstream564000.m3u8"
 	QUALITY_MEDIUM = "CCURstream1064000.m3u8"
-	QUALITY_HIGH = "CCURstream1664000.m3u8"
+	QUALITY_HIGH   = "CCURstream1664000.m3u8"
 
-	CACHE_FILE = "playlist_%s.m3u"
+	CACHE_FILE     = "playlist_%s.m3u"
 	CACHE_LIFETIME = 86400
 )
-

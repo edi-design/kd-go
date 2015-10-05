@@ -1,27 +1,28 @@
 package kd
+
 import (
-	"github.com/gorilla/mux"
-	"kd/config"
-	"net/http"
-	"fmt"
-	"errors"
-	"net"
-	"log"
-	"strings"
-	"encoding/json"
-	"os"
-	"io/ioutil"
-	"time"
 	"crypto/tls"
 	b64 "encoding/base64"
+	"encoding/json"
+	"errors"
+	"fmt"
+	"github.com/gorilla/mux"
+	"io/ioutil"
+	"kd/config"
+	"log"
+	"net"
+	"net/http"
+	"os"
+	"strings"
+	"time"
 )
 
 // struct of json configuration
 type MainConfig struct {
 	Service struct {
-				Username string
-				Password string
-			}
+		Username string
+		Password string
+	}
 }
 
 var Config *config.Config
@@ -97,7 +98,7 @@ func ChannelHandler(writer http.ResponseWriter, request *http.Request) {
 
 	// read cache
 	cache_stat, err_cache := os.Stat(cache_file)
-	if err_cache == nil && (time.Now().Unix() - cache_stat.ModTime().Unix() <= config.CACHE_LIFETIME ) {
+	if err_cache == nil && (time.Now().Unix()-cache_stat.ModTime().Unix() <= config.CACHE_LIFETIME) {
 		cached_data, _ := ioutil.ReadFile(cache_file)
 		data = string(cached_data[:])
 	} else {
@@ -139,10 +140,10 @@ func getQualityInformations(quality string) (string, string) {
 	var quality_file string
 	var quality_playlist string
 
-	if (quality == "low") {
+	if quality == "low" {
 		quality_file = fmt.Sprintf(config.CACHE_FILE, quality)
 		quality_playlist = config.QUALITY_LOW
-	} else if (quality == "high") {
+	} else if quality == "high" {
 		quality_file = fmt.Sprintf(config.CACHE_FILE, quality)
 		quality_playlist = config.QUALITY_HIGH
 	} else {
@@ -181,7 +182,7 @@ func getLicensedLink(id string, link string, playlist string) (string, error) {
 }
 
 // concats params to return a valid API url
-func getUrl(method string) (string) {
+func getUrl(method string) string {
 	return config.GATEWAY + "?m=" + method + "&iOSv=" + config.IOS_VERSION + "&Appv=" + config.APP_VERSION
 }
 
@@ -194,12 +195,12 @@ func signIn() {
 	request_url := getUrl(config.METHOD_SIGNIN)
 
 	body :=
-	"{\"initObj\":" +
-	getInitObj() +
-	",\"userName\":\"" + Config.Service.Username + "\"" +
-	",\"password\":\"" + Config.Service.Password + "\"" +
-	",\"providerID\":0" +
-	"}"
+		"{\"initObj\":" +
+			getInitObj() +
+			",\"userName\":\"" + Config.Service.Username + "\"" +
+			",\"password\":\"" + Config.Service.Password + "\"" +
+			",\"providerID\":0" +
+			"}"
 
 	handleError(fmt.Sprint(body))
 	err := httpRequest("POST", request_url, body, &result)
@@ -275,7 +276,6 @@ func httpRequest(method string, url string, body string, result interface{}) err
 		handleError(fmt.Sprintf("could not stat request: %v", err))
 		return err
 	}
-
 
 	resp, err_request := client.Do(req)
 	if err_request != nil {

@@ -5,37 +5,38 @@
 package main
 
 import (
-	"bitbucket.org/gotamer/cfg"
 	"flag"
 	"fmt"
-	"os"
-	"kd/config"
 	"kd"
+	"kd/config"
+	"os"
 	"path/filepath"
+
+	"bitbucket.org/gotamer/cfg"
 )
 
 var (
-	help = flag.Bool("h", false, "display help message")
-	verbose = flag.Bool("v", false, "enable verbose mode to see more debug output.")
-	version = flag.Bool("version", false, "shows the current version number.")
-	config_file_param = flag.String("c", "", "specifiy the config.json location, if not next to binary")
+	help                = flag.Bool("h", false, "display help message")
+	verbose             = flag.Bool("v", false, "enable verbose mode to see more debug output.")
+	version             = flag.Bool("version", false, "shows the current version number.")
+	config_file_param   = flag.String("c", "", "specifiy the config.json location, if not next to binary")
 	no_check_cert_param = flag.Bool("no-check-certificate", false, "disable root CA check for HTTP requests")
-	no_cache = flag.Bool("no-cache", false, "disables playlist caching")
-	Config  *config.Config
+	no_cache            = flag.Bool("no-cache", false, "disables playlist caching")
+	Config              *config.Config
 )
 
 func main() {
 	flag.Parse()
 
 	// if environment is not set, print help
-	if *help == true {
+	if *help {
 		fmt.Println("you need to set the following params:")
 		flag.PrintDefaults()
 		os.Exit(1)
 	}
 
 	// if environment is not set, print help
-	if *version == true {
+	if *version {
 		fmt.Println("KabelDeutschland streaming proxy, http://freshest.me")
 		fmt.Println("0.1.3")
 		os.Exit(1)
