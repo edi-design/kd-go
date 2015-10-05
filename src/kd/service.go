@@ -6,7 +6,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/gorilla/mux"
 	"io/ioutil"
 	"kd/config"
 	"log"
@@ -15,6 +14,8 @@ import (
 	"os"
 	"strings"
 	"time"
+
+	"github.com/gorilla/mux"
 )
 
 // struct of json configuration
@@ -25,10 +26,12 @@ type MainConfig struct {
 	}
 }
 
-var Config *config.Config
-var Verbose *bool
-var NoCheckCert *bool
-var NoCache *bool
+var (
+	Config      *config.Config
+	Verbose     *bool
+	NoCheckCert *bool
+	NoCache     *bool
+)
 
 // main
 func Service(ObjConfig *config.Config, verbose *bool, no_check_cert *bool, no_cache *bool) {
@@ -140,13 +143,14 @@ func getQualityInformations(quality string) (string, string) {
 	var quality_file string
 	var quality_playlist string
 
-	if quality == "low" {
+	switch quality {
+	case "low":
 		quality_file = fmt.Sprintf(config.CACHE_FILE, quality)
 		quality_playlist = config.QUALITY_LOW
-	} else if quality == "high" {
+	case "high":
 		quality_file = fmt.Sprintf(config.CACHE_FILE, quality)
 		quality_playlist = config.QUALITY_HIGH
-	} else {
+	default:
 		quality_file = fmt.Sprintf(config.CACHE_FILE, "medium")
 		quality_playlist = config.QUALITY_MEDIUM
 	}
@@ -260,14 +264,12 @@ func httpRequest(method string, url string, body string, result interface{}) err
 	}
 	client := &http.Client{Transport: tr}
 
-	switch {
-	case method == "GET":
+	switch method {
+	case "GET":
 		req, err = http.NewRequest(method, url, nil)
-		break
-	case method == "POST":
+	case "POST":
 		req, err = http.NewRequest(method, url, strings.NewReader(body))
 		req.Header.Set("Content-Type", "application/x-www-form-urlencoded; param=value")
-		break
 	default:
 		return errors.New(method + " is not a valid method.")
 	}
@@ -294,7 +296,7 @@ func httpRequest(method string, url string, body string, result interface{}) err
 
 // handle verbose mode otuput
 func handleError(message string) {
-	if *Verbose == true {
+	if *Verbose {
 		fmt.Println(message)
 	}
 }
