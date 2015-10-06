@@ -1,5 +1,6 @@
 #!/bin/bash
 
+# TODO if this is really necessary, it has to be rewritten
 # linux, desktop
 pushd $GOROOT/src/
 GOPATH=$GOPATH:$PWD/../ GOOS=linux GOARCH=amd64 ./make.bash --no-clean 2> /dev/null 1> /dev/null

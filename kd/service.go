@@ -1,41 +1,43 @@
 package kd
+
 import (
-	"github.com/gorilla/mux"
-	"kd/config"
-	"net/http"
-	"fmt"
-	"errors"
-	"net"
-	"log"
-	"strings"
-	"encoding/json"
-	"os"
-	"io/ioutil"
-	"time"
 	"crypto/tls"
 	b64 "encoding/base64"
+	"encoding/json"
+	"errors"
+	"flag"
+	"fmt"
+	"io/ioutil"
+	"log"
+	"net"
+	"net/http"
+	"os"
+	"strings"
+	"time"
+
+	"github.com/edi-design/kd-go/kd/config"
+	"github.com/gorilla/mux"
 )
 
 // struct of json configuration
 type MainConfig struct {
 	Service struct {
-				Username string
-				Password string
-			}
+		Username string
+		Password string
+	}
 }
 
-var Config *config.Config
-var Verbose *bool
-var NoCheckCert *bool
-var NoCache *bool
+var (
+	Config           *config.Config
+	verbose          = flag.Bool("v", false, "enable verbose mode to see more debug output.")
+	noCheckCertParam = flag.Bool("no-check-certificate", false, "disable root CA check for HTTP requests")
+	noCache          = flag.Bool("no-cache", false, "disables playlist caching")
+)
 
 // main
-func Service(ObjConfig *config.Config, verbose *bool, no_check_cert *bool, no_cache *bool) {
+func Service(ObjConfig *config.Config) {
 	// write config to environment vars
 	Config = ObjConfig
-	Verbose = verbose
-	NoCheckCert = no_check_cert
-	NoCache = no_cache
 
 	// check credentials
 	signIn()
@@ -44,35 +46,35 @@ func Service(ObjConfig *config.Config, verbose *bool, no_check_cert *bool, no_ca
 	serv := mux.NewRouter()
 
 	subroute := serv.PathPrefix("/").Subrouter()
-	subroute.HandleFunc("/", ChannelHandler).Methods("GET")
-	subroute.HandleFunc("/{quality}", ChannelHandler).Methods("GET")
-	subroute.HandleFunc("/{quality}/{format}", ChannelHandler).Methods("GET")
+	subroute.HandleFunc("/", channelHandler).Methods("GET")
+	subroute.HandleFunc("/{quality}", channelHandler).Methods("GET")
+	subroute.HandleFunc("/{quality}/{format}", channelHandler).Methods("GET")
 
 	// not found handler. fallback if given path is not set up.
-	subroute.HandleFunc("/{path:.*}", NotFoundHandler)
+	subroute.HandleFunc("/{path:.*}", notFoundHandler)
 
 	// start http-handle
 	http.Handle("/", serv)
 
 	fmt.Println("== Listening ...")
-	PrintInterfaces()
+	printInterfaces()
 	http.ListenAndServe(Config.Service.Listen, nil)
 }
 
 // Default route-handler if no configured endpoint matches.
-func NotFoundHandler(writer http.ResponseWriter, request *http.Request) {
-	params := mux.Vars(request)
+func notFoundHandler(w http.ResponseWriter, r *http.Request) {
+	params := mux.Vars(r)
 	path := params["path"]
 
 	err := errors.New("use known subroutes")
 	fmt.Println(err)
 	fmt.Printf("path requested: %s:", path)
 
-	writer.WriteHeader(http.StatusNotFound)
+	w.WriteHeader(http.StatusNotFound)
 }
 
 // Handles the root directory requests.
-func ChannelHandler(writer http.ResponseWriter, request *http.Request) {
+func channelHandler(w http.ResponseWriter, r *http.Request) {
 	// init vars
 	var result config.ChannelList
 	var data string
@@ -81,7 +83,7 @@ func ChannelHandler(writer http.ResponseWriter, request *http.Request) {
 	fmt.Println("== Get channellist")
 
 	// get params
-	params := mux.Vars(request)
+	params := mux.Vars(r)
 	format := params["format"]
 	quality := params["quality"]
 
@@ -97,7 +99,7 @@ func ChannelHandler(writer http.ResponseWriter, request *http.Request) {
 
 	// read cache
 	cache_stat, err_cache := os.Stat(cache_file)
-	if err_cache == nil && (time.Now().Unix() - cache_stat.ModTime().Unix() <= config.CACHE_LIFETIME ) {
+	if err_cache == nil && (time.Now().Unix()-cache_stat.ModTime().Unix() <= config.CACHE_LIFETIME) {
 		cached_data, _ := ioutil.ReadFile(cache_file)
 		data = string(cached_data[:])
 	} else {
@@ -114,38 +116,41 @@ func ChannelHandler(writer http.ResponseWriter, request *http.Request) {
 		}
 
 		// write cache file
-		if *NoCache == false {
+		if !*noCache {
 			ioutil.WriteFile(cache_file, []byte(data), 0644)
 		}
 	}
 
 	// set header
 	if format == "txt" {
-		writer.Header().Set("Content-Type", "text/plain")
+		w.Header().Set("Content-Type", "text/plain")
 	} else {
-		writer.Header().Set("Content-Type", "application/vnd.apple.mpegurl")
+		w.Header().Set("Content-Type", "application/vnd.apple.mpegurl")
 	}
 
-	writer.Header().Set("Status", "200 OK")
-	writer.Header().Set("Content-Disposition", "inline; filename=\"playlist.m3u\"")
-	writer.Header().Set("Cache-Control", "no-cache, must-revalidate")
-	writer.Header().Set("Expies", "Sat, 26 Jul 1997 05:00:00 GMT")
+	w.Header().Set("Status", "200 OK")
+	w.Header().Set("Content-Disposition", "inline; filename=\"playlist.m3u\"")
+	w.Header().Set("Cache-Control", "no-cache, must-revalidate")
+	w.Header().Set("Expies", "Sat, 26 Jul 1997 05:00:00 GMT")
 
-	writer.Write([]byte(data))
+	w.Write([]byte(data))
 }
 
 // get playlist according to requested quality
 func getQualityInformations(quality string) (string, string) {
-	var quality_file string
-	var quality_playlist string
+	var (
+		quality_file     string
+		quality_playlist string
+	)
 
-	if (quality == "low") {
+	switch quality {
+	case "low":
 		quality_file = fmt.Sprintf(config.CACHE_FILE, quality)
 		quality_playlist = config.QUALITY_LOW
-	} else if (quality == "high") {
+	case "high":
 		quality_file = fmt.Sprintf(config.CACHE_FILE, quality)
 		quality_playlist = config.QUALITY_HIGH
-	} else {
+	default:
 		quality_file = fmt.Sprintf(config.CACHE_FILE, "medium")
 		quality_playlist = config.QUALITY_MEDIUM
 	}
@@ -181,8 +186,8 @@ func getLicensedLink(id string, link string, playlist string) (string, error) {
 }
 
 // concats params to return a valid API url
-func getUrl(method string) (string) {
-	return config.GATEWAY + "?m=" + method + "&iOSv=" + config.IOS_VERSION + "&Appv=" + config.APP_VERSION
+func getUrl(method string) string {
+	return fmt.Sprintf("%s?m=%s&iOSv=%s&Appv=%s", config.GATEWAY, method, config.IOS_VERSION, config.APP_VERSION)
 }
 
 // check credentials
@@ -193,20 +198,21 @@ func signIn() {
 
 	request_url := getUrl(config.METHOD_SIGNIN)
 
+	// TODO use json.Marshal
 	body :=
-	"{\"initObj\":" +
-	getInitObj() +
-	",\"userName\":\"" + Config.Service.Username + "\"" +
-	",\"password\":\"" + Config.Service.Password + "\"" +
-	",\"providerID\":0" +
-	"}"
+		"{\"initObj\":" +
+			getInitObj() +
+			",\"userName\":\"" + Config.Service.Username + "\"" +
+			",\"password\":\"" + Config.Service.Password + "\"" +
+			",\"providerID\":0" +
+			"}"
 
-	handleError(fmt.Sprint(body))
+	handleError(body)
 	err := httpRequest("POST", request_url, body, &result)
 
 	switch {
 	case err != nil, result.LoginStatus != 0:
-		handleError(fmt.Sprint("Returned result: %v", result))
+		handleError(fmt.Sprintf("Returned result: %v", result))
 		fmt.Println("Credentials are wrong")
 		os.Exit(1)
 	}
@@ -215,7 +221,7 @@ func signIn() {
 }
 
 // print interfaces to know where the proxy is listening
-func PrintInterfaces() {
+func printInterfaces() {
 	addrs, err := net.InterfaceAddrs()
 
 	if err != nil {
@@ -253,20 +259,18 @@ func httpRequest(method string, url string, body string, result interface{}) err
 
 	// init client, skip cert check, because of some problems with env without root-ca
 	tr := &http.Transport{}
-	if *NoCheckCert == true {
+	if *noCheckCertParam {
 		tr.TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
 		handleError("= certificate check disabled")
 	}
 	client := &http.Client{Transport: tr}
 
-	switch {
-	case method == "GET":
+	switch method {
+	case "GET":
 		req, err = http.NewRequest(method, url, nil)
-		break
-	case method == "POST":
+	case "POST":
 		req, err = http.NewRequest(method, url, strings.NewReader(body))
 		req.Header.Set("Content-Type", "application/x-www-form-urlencoded; param=value")
-		break
 	default:
 		return errors.New(method + " is not a valid method.")
 	}
@@ -276,31 +280,30 @@ func httpRequest(method string, url string, body string, result interface{}) err
 		return err
 	}
 
-
-	resp, err_request := client.Do(req)
-	if err_request != nil {
-		handleError(fmt.Sprintf("could not fetch: %v", err_request))
-		return err_request
+	resp, err := client.Do(req)
+	if err != nil {
+		handleError(fmt.Sprintf("could not fetch: %v", err))
+		return err
 	}
 
 	decoder := json.NewDecoder(resp.Body)
-	err_decode := decoder.Decode(&result)
-	if err_decode != nil {
-		handleError(fmt.Sprintf("could not decode response: %v", err_decode))
+	err = decoder.Decode(&result)
+	if err != nil {
+		handleError(fmt.Sprintf("could not decode response: %v", err))
 	}
 
-	return err_decode
+	return err
 }
 
 // handle verbose mode otuput
 func handleError(message string) {
-	if *Verbose == true {
-		fmt.Println(message)
+	if *verbose {
+		log.Print(message)
 	}
 }
 
 // init obj
 func getInitObj() string {
-	init_object, _ := b64.StdEncoding.DecodeString(config.INIT_OBJECT)
-	return string(init_object)
+	initObject, _ := b64.StdEncoding.DecodeString(config.INIT_OBJECT)
+	return string(initObject)
 }
