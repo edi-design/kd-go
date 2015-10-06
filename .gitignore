@@ -1,14 +1,3 @@
-build/arm/kd_proxy
-build/arm/kd_proxy_arm_v5
-build/arm/kd_proxy_arm_v6
-build/arm/kd_proxy_arm_v7
-build/linux/kd_proxy_32
-build/linux/kd_proxy_64
-build/mac/config.json
-build/mac/kd_proxy
-build/mac/playlist_medium.m3u
-build/windows/kd_proxy_32.exe
-build/windows/kd_proxy_64.exe
 build/config.json
 config.json
 kd-go.iml
