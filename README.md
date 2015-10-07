@@ -1,6 +1,7 @@
 # kd-go
 
 [![Join the chat at https://gitter.im/edi-design/kd-go](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/edi-design/kd-go?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 GO-Version of the KabelDeutschland streaming proxy (https://github.com/edi-design/kd-streaming-proxy).
 To get more information, visit http://freshest.me.
 
