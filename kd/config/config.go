@@ -82,11 +82,11 @@ type LicensedLink struct {
 const (
 	GATEWAY              = "https://api-live.iptv.kabel-deutschland.de/v2_9/gateways/jsonpostgw.aspx"
 	IOS_VERSION          = "8.1.2"
-	APP_VERSION          = "1.1.5"
+	APP_VERSION          = "1.2.3"
 	METHOD_SIGNIN        = "SSOSignIn"
 	METHOD_CHANNELLIST   = "GetChannelMediaList"
 	METHOD_LICENSED_LINK = "GetLicensedLinks"
-	INIT_OBJECT          = "eyJBcGlVc2VyIjoidHZwYXBpXzE4MSIsIlVESUQiOiJEMkFDNjMzQUZCNjQ0Q0YwQTY3NTA1MzcwNTc4Q0RFNSIsIkRvbWFpbklEIjozMTUzODQsIlNpdGVHdWlkIjo2Nzk4NzAsIlBsYXRmb3JtIjoiaVBhZCIsIkFwaVBhc3MiOiJhek5ETHpzblRCVHRBclZXMlNIUiIsIkxvY2FsZSI6eyJMb2NhbGVEZXZpY2UiOiJudWxsIiwiTG9jYWxlVXNlclN0YXRlIjoiVW5rbm93biIsIkxvY2FsZUNvdW50cnkiOiJudWxsIiwiTG9jYWxlTGFuZ3VhZ2UiOiJudWxsIn19"
+	INIT_OBJECT          = "eyJBcGlVc2VyIjoidHZwYXBpXzE4MSIsIlVESUQiOiJEMkFDNjMzQUZCNjQ0Q0YwQTY3NTA1MzcwNTc4Q0RFNSIsIkRvbWFpbklEIjozMTUzODQsIlNpdGVHdWlkIjo2Nzk4NzAsIlBsYXRmb3JtIjoiaVBhZCIsIkFwaVBhc3MiOiJhek5ETHpzbktER3RBclZXMlNIUiIsIkxvY2FsZSI6eyJMb2NhbGVEZXZpY2UiOiJudWxsIiwiTG9jYWxlVXNlclN0YXRlIjoiVW5rbm93biIsIkxvY2FsZUNvdW50cnkiOiJudWxsIiwiTG9jYWxlTGFuZ3VhZ2UiOiJudWxsIn19"
 	CHANNEL_OBJECT       = "\"orderBy\":\"None\",\"pageSize\":1000,\"picSize\":\"100X100\",\"ChannelID\":340758"
 	M3U_HEAD             = "#EXTM3U\n"
 	M3U_LINE             = "#EXTINF:-1,%s\n%s\n"
